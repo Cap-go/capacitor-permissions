@@ -1,21 +1,97 @@
 /**
- * Input payload for the echo call.
+ * Shared permission status used on every platform.
  */
-export interface EchoOptions {
+export type PermissionState = 'granted' | 'denied' | 'blocked' | 'limited' | 'unavailable';
+
+/**
+ * Named permissions this plugin can check or request.
+ */
+export type PermissionName =
+  | 'camera'
+  | 'microphone'
+  | 'photoLibrary'
+  | 'photoLibraryAddOnly'
+  | 'contacts'
+  | 'calendar'
+  | 'reminders'
+  | 'locationWhenInUse'
+  | 'locationAlways'
+  | 'bluetooth'
+  | 'motion'
+  | 'notifications'
+  | 'speechRecognition'
+  | 'appTrackingTransparency'
+  | 'activityRecognition'
+  | 'phone'
+  | 'sms'
+  | 'mediaAudio'
+  | 'mediaImages'
+  | 'mediaVideo';
+
+/**
+ * Options for checking or requesting a single permission.
+ */
+export interface PermissionOptions {
   /**
-   * Arbitrary text that should be returned by native/web implementations.
+   * Permission to evaluate.
    */
-  value: string;
+  permission: PermissionName;
 }
 
 /**
- * Echo response payload.
+ * Result for a single permission status.
  */
-export interface EchoResult {
+export interface PermissionStatusResult {
   /**
-   * The same value passed to `echo`.
+   * Current status for the requested permission.
    */
-  value: string;
+  status: PermissionState;
+}
+
+/**
+ * Options for checking or requesting several permissions.
+ */
+export interface MultiplePermissionOptions {
+  /**
+   * Permissions to evaluate.
+   */
+  permissions: PermissionName[];
+}
+
+/**
+ * Result for several permission statuses.
+ */
+export interface MultiplePermissionStatusResult {
+  /**
+   * Map of permission name to status.
+   */
+  statuses: Record<string, PermissionState>;
+}
+
+/**
+ * Result for Android rationale checks.
+ */
+export interface ShouldShowRationaleResult {
+  /**
+   * True only when Android would show a rationale dialog.
+   * Always false on iOS and web.
+   */
+  shouldShow: boolean;
+}
+
+/**
+ * Settings screen type for `openSettings`.
+ */
+export type SettingsType = 'application' | 'notifications';
+
+/**
+ * Options for opening system settings.
+ */
+export interface OpenSettingsOptions {
+  /**
+   * Which settings screen to open. Defaults to `application`.
+   */
+  type?: SettingsType;
 }
 
 /**
@@ -29,13 +105,48 @@ export interface PluginVersionResult {
 }
 
 /**
- * Base API used by the template plugin.
+ * Cross-platform permissions API.
  */
 export interface PermissionsPlugin {
   /**
-   * Echo a string to validate JS <-> native wiring.
+   * Check the current status of one permission without prompting.
    */
-  echo(options: EchoOptions): Promise<EchoResult>;
+  check(options: PermissionOptions): Promise<PermissionStatusResult>;
+
+  /**
+   * Request one permission from the user.
+   */
+  request(options: PermissionOptions): Promise<PermissionStatusResult>;
+
+  /**
+   * Check several permissions without prompting.
+   */
+  checkMultiple(options: MultiplePermissionOptions): Promise<MultiplePermissionStatusResult>;
+
+  /**
+   * Request several permissions from the user.
+   */
+  requestMultiple(options: MultiplePermissionOptions): Promise<MultiplePermissionStatusResult>;
+
+  /**
+   * Whether Android should show a rationale before requesting again.
+   * Returns `{ shouldShow: false }` on iOS and web.
+   */
+  shouldShowRationale(options: PermissionOptions): Promise<ShouldShowRationaleResult>;
+
+  /**
+   * Open the application or notification settings screen.
+   * Rejects on web.
+   */
+  openSettings(options?: OpenSettingsOptions): Promise<void>;
+
+  /**
+   * Ask for precise location.
+   * On iOS, requests temporary full accuracy when already authorized when-in-use.
+   * On Android, requests `ACCESS_FINE_LOCATION`.
+   * On web, returns the geolocation permission status.
+   */
+  requestPreciseLocation(): Promise<PermissionStatusResult>;
 
   /**
    * Returns the platform implementation version marker.

@@ -2,28 +2,40 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-
-
     <meta
       name="viewport"
       content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <meta name="format-detection" content="telephone=no" />
     <meta name="msapplication-tap-highlight" content="no" />
-<title>@capgo/capacitor-permissions</title>
+    <title>@capgo/capacitor-permissions</title>
     <link rel="stylesheet" href="/src/style.css" />
   </head>
   <body>
     <main class="container">
       <h1>@capgo/capacitor-permissions</h1>
-      <p class="lead">Quickly validate the template plugin wiring.</p>
+      <p class="lead">
+        Demo: camera, microphone, notifications, locationWhenInUse, photoLibrary
+      </p>
 
-      <label for="echo-value">Echo value</label>
-      <input id="echo-value" type="text" value="Hello from example app" />
+      <label for="permission-select">Permission</label>
+      <select id="permission-select">
+        <option value="camera">camera</option>
+        <option value="microphone">microphone</option>
+        <option value="notifications">notifications</option>
+        <option value="locationWhenInUse">locationWhenInUse</option>
+        <option value="photoLibrary">photoLibrary</option>
+      </select>
 
       <div class="actions">
-        <button id="run-echo">Run echo</button>
-        <button id="get-version">Get plugin version</button>
+        <button id="check-one">Check</button>
+        <button id="request-one">Request</button>
+        <button id="check-several">Check several</button>
+        <button id="request-several">Request several</button>
+        <button id="rationale">Rationale</button>
+        <button id="open-settings">Open settings</button>
+        <button id="precise-location">Precise location</button>
+        <button id="get-version">Get version</button>
       </div>
 
       <pre id="plugin-output">Press a button to run an action.</pre>
