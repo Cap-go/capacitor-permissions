@@ -19,7 +19,19 @@ let package = Package(
                 .product(name: "Capacitor", package: "capacitor-swift-pm"),
                 .product(name: "Cordova", package: "capacitor-swift-pm")
             ],
-            path: "ios/Sources/PermissionsPlugin"),
+            path: "ios/Sources/PermissionsPlugin",
+            linkerSettings: [
+                .linkedFramework("AVFoundation"),
+                .linkedFramework("Photos"),
+                .linkedFramework("Contacts"),
+                .linkedFramework("EventKit"),
+                .linkedFramework("CoreLocation"),
+                .linkedFramework("CoreBluetooth"),
+                .linkedFramework("CoreMotion"),
+                .linkedFramework("UserNotifications"),
+                .linkedFramework("Speech"),
+                .linkedFramework("AppTrackingTransparency")
+            ]),
         .testTarget(
             name: "PermissionsPluginTests",
             dependencies: ["PermissionsPlugin"],

@@ -23,9 +23,9 @@
 - [x] Git remote points at this repository.
 - [x] Bootstrap init script and templates are removed.
 - [x] Compatibility table starts at Capacitor 8.
-- [ ] Update `src/definitions.ts` with the real public API and JSDoc.
-- [ ] Run `bun run docgen` and review generated API docs below.
-- [ ] Confirm examples in this file run against the real implementation.
+- [x] Update `src/definitions.ts` with the real public API and JSDoc.
+- [x] Run `bun run docgen` and review generated API docs below.
+- [x] Confirm examples in this file run against the real implementation.
 - [ ] Set GitHub repo description to start with `Capacitor plugin for ...`.
 - [x] GitHub homepage is `https://capgo.app/docs/plugins/permissions/`.
 - [ ] Create a GitHub repository custom social preview from `assets/github-social-template.svg`, export it to `assets/github-social-preview.png`, and upload it at GitHub **Settings** -> **General** -> **Social preview**.
@@ -232,9 +232,22 @@ bunx cap sync
 ```typescript
 import { Permissions } from '@capgo/capacitor-permissions';
 
-const result = await Permissions.echo({ value: 'Hello from Capgo' });
-console.log(result.value);
+const { status } = await Permissions.check({ permission: 'camera' });
+if (status !== 'granted') {
+  const requested = await Permissions.request({ permission: 'camera' });
+  console.log(requested.status);
+}
 ```
+
+## Opt-in native declarations
+
+The plugin Android library manifest declares **no** `uses-permission` entries, and iOS usage strings are not forced into every app. Add only what you use:
+
+```bash
+node scripts/apply-permissions.mjs --project ./example-app --permissions camera,microphone,notifications,locationWhenInUse,photoLibrary
+```
+
+Pass your Capacitor app directory to `--project`. The script updates `android/app/src/main/AndroidManifest.xml` and `ios/App/App/Info.plist` when those files exist. It is idempotent.
 
 ## Integration Notes
 
@@ -244,36 +257,144 @@ console.log(result.value);
 
 ## Example App
 
-The `example-app/` folder is linked via `file:..` and is intended for validating native wiring during development.
+The `example-app/` folder demos `camera`, `microphone`, `notifications`, `locationWhenInUse`, and `photoLibrary`. Apply declarations with the command above, then run `bun run start` inside `example-app/`.
 
 ## API
 
 <docgen-index>
 
-* [`echo(...)`](#echo)
+* [`check(...)`](#check)
+* [`request(...)`](#request)
+* [`checkMultiple(...)`](#checkmultiple)
+* [`requestMultiple(...)`](#requestmultiple)
+* [`shouldShowRationale(...)`](#shouldshowrationale)
+* [`openSettings(...)`](#opensettings)
+* [`requestPreciseLocation()`](#requestpreciselocation)
 * [`getPluginVersion()`](#getpluginversion)
 * [Interfaces](#interfaces)
+* [Type Aliases](#type-aliases)
 
 </docgen-index>
 
 <docgen-api>
 <!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
 
-Base API used by the template plugin.
+Cross-platform permissions API.
 
-### echo(...)
+### check(...)
 
 ```typescript
-echo(options: EchoOptions) => Promise<EchoResult>
+check(options: PermissionOptions) => Promise<PermissionStatusResult>
 ```
 
-Echo a string to validate JS &lt;-&gt; native wiring.
+Check the current status of one permission without prompting.
 
-| Param         | Type                                                |
-| ------------- | --------------------------------------------------- |
-| **`options`** | <code><a href="#echooptions">EchoOptions</a></code> |
+| Param         | Type                                                            |
+| ------------- | --------------------------------------------------------------- |
+| **`options`** | <code><a href="#permissionoptions">PermissionOptions</a></code> |
 
-**Returns:** <code>Promise&lt;<a href="#echoresult">EchoResult</a>&gt;</code>
+**Returns:** <code>Promise&lt;<a href="#permissionstatusresult">PermissionStatusResult</a>&gt;</code>
+
+--------------------
+
+
+### request(...)
+
+```typescript
+request(options: PermissionOptions) => Promise<PermissionStatusResult>
+```
+
+Request one permission from the user.
+
+| Param         | Type                                                            |
+| ------------- | --------------------------------------------------------------- |
+| **`options`** | <code><a href="#permissionoptions">PermissionOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#permissionstatusresult">PermissionStatusResult</a>&gt;</code>
+
+--------------------
+
+
+### checkMultiple(...)
+
+```typescript
+checkMultiple(options: MultiplePermissionOptions) => Promise<MultiplePermissionStatusResult>
+```
+
+Check several permissions without prompting.
+
+| Param         | Type                                                                            |
+| ------------- | ------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#multiplepermissionoptions">MultiplePermissionOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#multiplepermissionstatusresult">MultiplePermissionStatusResult</a>&gt;</code>
+
+--------------------
+
+
+### requestMultiple(...)
+
+```typescript
+requestMultiple(options: MultiplePermissionOptions) => Promise<MultiplePermissionStatusResult>
+```
+
+Request several permissions from the user.
+
+| Param         | Type                                                                            |
+| ------------- | ------------------------------------------------------------------------------- |
+| **`options`** | <code><a href="#multiplepermissionoptions">MultiplePermissionOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#multiplepermissionstatusresult">MultiplePermissionStatusResult</a>&gt;</code>
+
+--------------------
+
+
+### shouldShowRationale(...)
+
+```typescript
+shouldShowRationale(options: PermissionOptions) => Promise<ShouldShowRationaleResult>
+```
+
+Whether Android should show a rationale before requesting again.
+Returns `{ shouldShow: false }` on iOS and web.
+
+| Param         | Type                                                            |
+| ------------- | --------------------------------------------------------------- |
+| **`options`** | <code><a href="#permissionoptions">PermissionOptions</a></code> |
+
+**Returns:** <code>Promise&lt;<a href="#shouldshowrationaleresult">ShouldShowRationaleResult</a>&gt;</code>
+
+--------------------
+
+
+### openSettings(...)
+
+```typescript
+openSettings(options?: OpenSettingsOptions | undefined) => Promise<void>
+```
+
+Open the application or notification settings screen.
+Rejects on web.
+
+| Param         | Type                                                                |
+| ------------- | ------------------------------------------------------------------- |
+| **`options`** | <code><a href="#opensettingsoptions">OpenSettingsOptions</a></code> |
+
+--------------------
+
+
+### requestPreciseLocation()
+
+```typescript
+requestPreciseLocation() => Promise<PermissionStatusResult>
+```
+
+Ask for precise location.
+On iOS, requests temporary full accuracy when already authorized when-in-use.
+On Android, requests `ACCESS_FINE_LOCATION`.
+On web, returns the geolocation permission status.
+
+**Returns:** <code>Promise&lt;<a href="#permissionstatusresult">PermissionStatusResult</a>&gt;</code>
 
 --------------------
 
@@ -294,22 +415,58 @@ Returns the platform implementation version marker.
 ### Interfaces
 
 
-#### EchoResult
+#### PermissionStatusResult
 
-Echo response payload.
+Result for a single permission status.
 
-| Prop        | Type                | Description                      |
-| ----------- | ------------------- | -------------------------------- |
-| **`value`** | <code>string</code> | The same value passed to `echo`. |
+| Prop         | Type                                                        | Description                                  |
+| ------------ | ----------------------------------------------------------- | -------------------------------------------- |
+| **`status`** | <code><a href="#permissionstate">PermissionState</a></code> | Current status for the requested permission. |
 
 
-#### EchoOptions
+#### PermissionOptions
 
-Input payload for the echo call.
+Options for checking or requesting a single permission.
 
-| Prop        | Type                | Description                                                           |
-| ----------- | ------------------- | --------------------------------------------------------------------- |
-| **`value`** | <code>string</code> | Arbitrary text that should be returned by native/web implementations. |
+| Prop             | Type                                                      | Description             |
+| ---------------- | --------------------------------------------------------- | ----------------------- |
+| **`permission`** | <code><a href="#permissionname">PermissionName</a></code> | Permission to evaluate. |
+
+
+#### MultiplePermissionStatusResult
+
+Result for several permission statuses.
+
+| Prop           | Type                                                                                                    | Description                       |
+| -------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| **`statuses`** | <code><a href="#record">Record</a>&lt;string, <a href="#permissionstate">PermissionState</a>&gt;</code> | Map of permission name to status. |
+
+
+#### MultiplePermissionOptions
+
+Options for checking or requesting several permissions.
+
+| Prop              | Type                          | Description              |
+| ----------------- | ----------------------------- | ------------------------ |
+| **`permissions`** | <code>PermissionName[]</code> | Permissions to evaluate. |
+
+
+#### ShouldShowRationaleResult
+
+Result for Android rationale checks.
+
+| Prop             | Type                 | Description                                                                        |
+| ---------------- | -------------------- | ---------------------------------------------------------------------------------- |
+| **`shouldShow`** | <code>boolean</code> | True only when Android would show a rationale dialog. Always false on iOS and web. |
+
+
+#### OpenSettingsOptions
+
+Options for opening system settings.
+
+| Prop       | Type                                                  | Description                                               |
+| ---------- | ----------------------------------------------------- | --------------------------------------------------------- |
+| **`type`** | <code><a href="#settingstype">SettingsType</a></code> | Which settings screen to open. Defaults to `application`. |
 
 
 #### PluginVersionResult
@@ -319,5 +476,34 @@ Plugin version payload.
 | Prop          | Type                | Description                                                 |
 | ------------- | ------------------- | ----------------------------------------------------------- |
 | **`version`** | <code>string</code> | Version identifier returned by the platform implementation. |
+
+
+### Type Aliases
+
+
+#### PermissionState
+
+<code>'prompt' | 'prompt-with-rationale' | 'granted' | 'denied'</code>
+
+
+#### PermissionName
+
+Named permissions this plugin can check or request.
+
+<code>'camera' | 'microphone' | 'photoLibrary' | 'photoLibraryAddOnly' | 'contacts' | 'calendar' | 'reminders' | 'locationWhenInUse' | 'locationAlways' | 'bluetooth' | 'motion' | 'notifications' | 'speechRecognition' | 'appTrackingTransparency' | 'activityRecognition' | 'phone' | 'sms' | 'mediaAudio' | 'mediaImages' | 'mediaVideo'</code>
+
+
+#### Record
+
+Construct a type with a set of properties K of type T
+
+<code>{ [P in K]: T; }</code>
+
+
+#### SettingsType
+
+Settings screen type for `openSettings`.
+
+<code>'application' | 'notifications'</code>
 
 </docgen-api>
