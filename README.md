@@ -7,6 +7,11 @@
   <h2><a href="https://capgo.app/consulting/?ref=plugin_permissions"> Missing a feature? We’ll build the plugin for you 💪</a></h2>
 </div>
 
+<p align="center">
+  <img src="./screenshots/android-request.webp" alt="Android emulator showing the camera permission dialog" width="280" />
+  <img src="./screenshots/android-granted.webp" alt="Example app reporting camera permission as granted" width="280" />
+</p>
+
 ## Snapshot
 
 - **Plugin name:** `Permissions`
@@ -258,6 +263,11 @@ Pass your Capacitor app directory to `--project`. The script updates `android/ap
 ## Example App
 
 The `example-app/` folder demos `camera`, `microphone`, `notifications`, `locationWhenInUse`, and `photoLibrary`. Apply declarations with the command above, then run `bun run start` inside `example-app/`.
+
+<p align="center">
+  <img src="./screenshots/android-request.webp" alt="Android emulator showing the camera permission dialog" width="280" />
+  <img src="./screenshots/android-granted.webp" alt="Example app reporting camera permission as granted" width="280" />
+</p>
 
 ## API
 
