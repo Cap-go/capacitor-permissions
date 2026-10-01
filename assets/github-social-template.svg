@@ -49,7 +49,7 @@
     font-weight="700"
     letter-spacing="0"
   >
-    GitHub social preview - Cap-go/capacitor-permissions - edit copy, keep npm install text
+    Cap-go/capacitor-permissions - unified runtime permissions for Capacitor
   </text>
 
   <g clip-path="url(#headlineClip)">
@@ -62,7 +62,7 @@
       font-weight="850"
       letter-spacing="0"
     >
-      Add plugin features in one line
+      One API for runtime permissions
     </text>
     <text
       x="80"
@@ -73,7 +73,7 @@
       font-weight="850"
       letter-spacing="0"
     >
-      without native friction
+      on iOS, Android, and web
     </text>
   </g>
 
@@ -87,7 +87,7 @@
     font-weight="600"
     letter-spacing="0"
   >
-    Capacitor plugin template for fast, production-ready native integrations.
+    Check and request camera, location, notifications, and more with shared status values.
   </text>
 
   <g filter="url(#shadow)">

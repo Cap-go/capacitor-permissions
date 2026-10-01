@@ -6,6 +6,8 @@
  * - `blocked`: the user denied access and the app cannot prompt again without settings.
  * - `limited`: partial access (for example iOS limited photo library or reduced location accuracy).
  * - `unavailable`: the permission is not supported on this platform or not declared in the app manifest.
+ *
+ * @since 8.0.0
  */
 export type AppPermissionState = 'granted' | 'denied' | 'blocked' | 'limited' | 'unavailable';
 
@@ -16,6 +18,8 @@ export type AppPermissionState = 'granted' | 'denied' | 'blocked' | 'limited' | 
  * iOS-only names include `reminders` and `appTrackingTransparency`.
  * Web supports a subset via browser APIs (`camera`, `microphone`, `notifications`, `locationWhenInUse`).
  * On web, `locationAlways` is an alias of foreground geolocation only; browsers do not expose background location permission.
+ *
+ * @since 8.0.0
  */
 export type PermissionName =
   | 'camera'
@@ -46,7 +50,9 @@ export type PermissionName =
  */
 export interface PermissionOptions {
   /**
-   * Permission to evaluate.
+   * Logical permission to evaluate or request.
+   *
+   * @since 8.0.0
    */
   permission: PermissionName;
 }
@@ -59,6 +65,8 @@ export interface PermissionOptions {
 export interface PermissionStatusResult {
   /**
    * Current status for the requested permission.
+   *
+   * @since 8.0.0
    */
   status: AppPermissionState;
 }
@@ -70,7 +78,9 @@ export interface PermissionStatusResult {
  */
 export interface MultiplePermissionOptions {
   /**
-   * Permissions to evaluate in order.
+   * Permissions to evaluate in order. On `requestMultiple`, each permission is requested one after another.
+   *
+   * @since 8.0.0
    */
   permissions: PermissionName[];
 }
@@ -82,7 +92,9 @@ export interface MultiplePermissionOptions {
  */
 export interface MultiplePermissionStatusResult {
   /**
-   * Map of permission name to status.
+   * Map of permission name to status. Keys match the names passed in `permissions`.
+   *
+   * @since 8.0.0
    */
   statuses: Record<string, AppPermissionState>;
 }
@@ -96,6 +108,8 @@ export interface ShouldShowRationaleResult {
   /**
    * True only when Android would show a rationale dialog before requesting again.
    * Always false on iOS and web.
+   *
+   * @since 8.0.0
    */
   shouldShow: boolean;
 }
@@ -114,7 +128,10 @@ export type SettingsType = 'application' | 'notifications';
  */
 export interface OpenSettingsOptions {
   /**
-   * Which settings screen to open. Defaults to `application`.
+   * Which settings screen to open.
+   *
+   * @default 'application'
+   * @since 8.0.0
    */
   type?: SettingsType;
 }
@@ -127,6 +144,8 @@ export interface OpenSettingsOptions {
 export interface PluginVersionResult {
   /**
    * Version identifier returned by the platform implementation (`native` on mobile, `web` in browsers).
+   *
+   * @since 8.0.0
    */
   version: string;
 }
@@ -141,13 +160,24 @@ export interface PermissionsPlugin {
    * Check the current status of one permission without prompting the user.
    *
    * @param options.permission Logical permission to inspect.
+   * @since 8.0.0
+   * @example
+   * ```typescript
+   * const { status } = await Permissions.check({ permission: 'camera' });
+   * ```
    */
   check(options: PermissionOptions): Promise<PermissionStatusResult>;
 
   /**
    * Request one permission from the user. On Android, shows the system dialog when needed.
+   * On iOS, triggers the platform authorization flow for the mapped capability.
    *
    * @param options.permission Logical permission to request.
+   * @since 8.0.0
+   * @example
+   * ```typescript
+   * const { status } = await Permissions.request({ permission: 'notifications' });
+   * ```
    */
   request(options: PermissionOptions): Promise<PermissionStatusResult>;
 
@@ -155,6 +185,13 @@ export interface PermissionsPlugin {
    * Check several permissions without prompting.
    *
    * @param options.permissions List of permissions to inspect.
+   * @since 8.0.0
+   * @example
+   * ```typescript
+   * const { statuses } = await Permissions.checkMultiple({
+   *   permissions: ['camera', 'microphone'],
+   * });
+   * ```
    */
   checkMultiple(options: MultiplePermissionOptions): Promise<MultiplePermissionStatusResult>;
 
@@ -162,6 +199,7 @@ export interface PermissionsPlugin {
    * Request several permissions sequentially so dialogs are not shown on top of each other.
    *
    * @param options.permissions List of permissions to request.
+   * @since 8.0.0
    */
   requestMultiple(options: MultiplePermissionOptions): Promise<MultiplePermissionStatusResult>;
 
@@ -170,6 +208,15 @@ export interface PermissionsPlugin {
    * Returns `{ shouldShow: false }` on iOS and web.
    *
    * @param options.permission Logical permission to inspect.
+   * @since 8.0.0
+   * @example
+   * ```typescript
+   * const { shouldShow } = await Permissions.shouldShowRationale({ permission: 'camera' });
+   * if (shouldShow) {
+   *   await showWhyWeNeedCamera();
+   *   await Permissions.request({ permission: 'camera' });
+   * }
+   * ```
    */
   shouldShowRationale(options: PermissionOptions): Promise<ShouldShowRationaleResult>;
 
@@ -178,6 +225,11 @@ export interface PermissionsPlugin {
    * Rejects on web with `UNIMPLEMENTED`.
    *
    * @param options.type Settings destination. Defaults to `application`.
+   * @since 8.0.0
+   * @example
+   * ```typescript
+   * await Permissions.openSettings({ type: 'notifications' });
+   * ```
    */
   openSettings(options?: OpenSettingsOptions): Promise<void>;
 
@@ -186,11 +238,19 @@ export interface PermissionsPlugin {
    * On iOS, requests temporary full accuracy when already authorized when-in-use.
    * On Android, requests `ACCESS_FINE_LOCATION`.
    * On web, returns the geolocation permission status after prompting when possible.
+   *
+   * @since 8.0.0
+   * @example
+   * ```typescript
+   * const { status } = await Permissions.requestPreciseLocation();
+   * ```
    */
   requestPreciseLocation(): Promise<PermissionStatusResult>;
 
   /**
    * Returns the platform implementation version marker.
+   *
+   * @since 8.0.0
    */
   getPluginVersion(): Promise<PluginVersionResult>;
 }

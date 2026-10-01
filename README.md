@@ -27,6 +27,12 @@
 - Request notification permission before registering push tokens
 - Upgrade from reduced to precise location when a map feature needs it
 
+## Documentation
+
+- [Plugin docs on Capgo](https://capgo.app/docs/plugins/permissions/)
+- [Tutorial: capacitor-permissions](https://capgo.app/plugins/capacitor-permissions/)
+- [Capgo live updates](https://capgo.app/?ref=plugin_permissions)
+
 <p align="center">
   <img src="./screenshots/android-request.webp" alt="Android emulator showing the camera permission dialog" width="280" />
   <img src="./screenshots/android-granted.webp" alt="Example app reporting camera permission as granted" width="280" />
@@ -207,6 +213,8 @@ Check the current status of one permission without prompting the user.
 
 **Returns:** <code>Promise&lt;<a href="#permissionstatusresult">PermissionStatusResult</a>&gt;</code>
 
+**Since:** 8.0.0
+
 --------------------
 
 
@@ -217,12 +225,15 @@ request(options: PermissionOptions) => Promise<PermissionStatusResult>
 ```
 
 Request one permission from the user. On Android, shows the system dialog when needed.
+On iOS, triggers the platform authorization flow for the mapped capability.
 
 | Param         | Type                                                            |
 | ------------- | --------------------------------------------------------------- |
 | **`options`** | <code><a href="#permissionoptions">PermissionOptions</a></code> |
 
 **Returns:** <code>Promise&lt;<a href="#permissionstatusresult">PermissionStatusResult</a>&gt;</code>
+
+**Since:** 8.0.0
 
 --------------------
 
@@ -241,6 +252,8 @@ Check several permissions without prompting.
 
 **Returns:** <code>Promise&lt;<a href="#multiplepermissionstatusresult">MultiplePermissionStatusResult</a>&gt;</code>
 
+**Since:** 8.0.0
+
 --------------------
 
 
@@ -257,6 +270,8 @@ Request several permissions sequentially so dialogs are not shown on top of each
 | **`options`** | <code><a href="#multiplepermissionoptions">MultiplePermissionOptions</a></code> |
 
 **Returns:** <code>Promise&lt;<a href="#multiplepermissionstatusresult">MultiplePermissionStatusResult</a>&gt;</code>
+
+**Since:** 8.0.0
 
 --------------------
 
@@ -276,6 +291,8 @@ Returns `{ shouldShow: false }` on iOS and web.
 
 **Returns:** <code>Promise&lt;<a href="#shouldshowrationaleresult">ShouldShowRationaleResult</a>&gt;</code>
 
+**Since:** 8.0.0
+
 --------------------
 
 
@@ -291,6 +308,8 @@ Rejects on web with `UNIMPLEMENTED`.
 | Param         | Type                                                                |
 | ------------- | ------------------------------------------------------------------- |
 | **`options`** | <code><a href="#opensettingsoptions">OpenSettingsOptions</a></code> |
+
+**Since:** 8.0.0
 
 --------------------
 
@@ -308,6 +327,8 @@ On web, returns the geolocation permission status after prompting when possible.
 
 **Returns:** <code>Promise&lt;<a href="#permissionstatusresult">PermissionStatusResult</a>&gt;</code>
 
+**Since:** 8.0.0
+
 --------------------
 
 
@@ -321,6 +342,8 @@ Returns the platform implementation version marker.
 
 **Returns:** <code>Promise&lt;<a href="#pluginversionresult">PluginVersionResult</a>&gt;</code>
 
+**Since:** 8.0.0
+
 --------------------
 
 
@@ -331,63 +354,63 @@ Returns the platform implementation version marker.
 
 Result for a single permission status.
 
-| Prop         | Type                                                              | Description                                  |
-| ------------ | ----------------------------------------------------------------- | -------------------------------------------- |
-| **`status`** | <code><a href="#apppermissionstate">AppPermissionState</a></code> | Current status for the requested permission. |
+| Prop         | Type                                                              | Description                                  | Since |
+| ------------ | ----------------------------------------------------------------- | -------------------------------------------- | ----- |
+| **`status`** | <code><a href="#apppermissionstate">AppPermissionState</a></code> | Current status for the requested permission. | 8.0.0 |
 
 
 #### PermissionOptions
 
 Options for checking or requesting a single permission.
 
-| Prop             | Type                                                      | Description             |
-| ---------------- | --------------------------------------------------------- | ----------------------- |
-| **`permission`** | <code><a href="#permissionname">PermissionName</a></code> | Permission to evaluate. |
+| Prop             | Type                                                      | Description                                | Since |
+| ---------------- | --------------------------------------------------------- | ------------------------------------------ | ----- |
+| **`permission`** | <code><a href="#permissionname">PermissionName</a></code> | Logical permission to evaluate or request. | 8.0.0 |
 
 
 #### MultiplePermissionStatusResult
 
 Result for several permission statuses.
 
-| Prop           | Type                                                                                                          | Description                       |
-| -------------- | ------------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| **`statuses`** | <code><a href="#record">Record</a>&lt;string, <a href="#apppermissionstate">AppPermissionState</a>&gt;</code> | Map of permission name to status. |
+| Prop           | Type                                                                                                          | Description                                                                     | Since |
+| -------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ----- |
+| **`statuses`** | <code><a href="#record">Record</a>&lt;string, <a href="#apppermissionstate">AppPermissionState</a>&gt;</code> | Map of permission name to status. Keys match the names passed in `permissions`. | 8.0.0 |
 
 
 #### MultiplePermissionOptions
 
 Options for checking or requesting several permissions.
 
-| Prop              | Type                          | Description                       |
-| ----------------- | ----------------------------- | --------------------------------- |
-| **`permissions`** | <code>PermissionName[]</code> | Permissions to evaluate in order. |
+| Prop              | Type                          | Description                                                                                             | Since |
+| ----------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------- | ----- |
+| **`permissions`** | <code>PermissionName[]</code> | Permissions to evaluate in order. On `requestMultiple`, each permission is requested one after another. | 8.0.0 |
 
 
 #### ShouldShowRationaleResult
 
 Result for Android rationale checks.
 
-| Prop             | Type                 | Description                                                                                                |
-| ---------------- | -------------------- | ---------------------------------------------------------------------------------------------------------- |
-| **`shouldShow`** | <code>boolean</code> | True only when Android would show a rationale dialog before requesting again. Always false on iOS and web. |
+| Prop             | Type                 | Description                                                                                                | Since |
+| ---------------- | -------------------- | ---------------------------------------------------------------------------------------------------------- | ----- |
+| **`shouldShow`** | <code>boolean</code> | True only when Android would show a rationale dialog before requesting again. Always false on iOS and web. | 8.0.0 |
 
 
 #### OpenSettingsOptions
 
 Options for opening system settings.
 
-| Prop       | Type                                                  | Description                                               |
-| ---------- | ----------------------------------------------------- | --------------------------------------------------------- |
-| **`type`** | <code><a href="#settingstype">SettingsType</a></code> | Which settings screen to open. Defaults to `application`. |
+| Prop       | Type                                                  | Description                    | Default                    | Since |
+| ---------- | ----------------------------------------------------- | ------------------------------ | -------------------------- | ----- |
+| **`type`** | <code><a href="#settingstype">SettingsType</a></code> | Which settings screen to open. | <code>'application'</code> | 8.0.0 |
 
 
 #### PluginVersionResult
 
 Plugin version payload.
 
-| Prop          | Type                | Description                                                                                         |
-| ------------- | ------------------- | --------------------------------------------------------------------------------------------------- |
-| **`version`** | <code>string</code> | Version identifier returned by the platform implementation (`native` on mobile, `web` in browsers). |
+| Prop          | Type                | Description                                                                                         | Since |
+| ------------- | ------------------- | --------------------------------------------------------------------------------------------------- | ----- |
+| **`version`** | <code>string</code> | Version identifier returned by the platform implementation (`native` on mobile, `web` in browsers). | 8.0.0 |
 
 
 ### Type Aliases
