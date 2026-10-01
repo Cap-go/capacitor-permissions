@@ -1,6 +1,6 @@
-# `@capgo/capacitor-permissions`
+# `@capgo/capacitor-permissions` example
 
-This Vite project links directly to the local plugin source so you can validate iOS, Android, and Web wiring while developing.
+Local Vite shell linked to the parent plugin (`file:..`). Use it to try every `PermissionName` on web, iOS, and Android.
 
 ## Getting started
 
@@ -9,10 +9,16 @@ bun install
 bun run start
 ```
 
-To test on native shells:
+Before native tests, declare the permissions you need (from the repo root):
+
+```bash
+node ../scripts/apply-permissions.mjs --project . --permissions camera,microphone,notifications,locationWhenInUse,photoLibrary
+bunx cap sync
+```
+
+Add platforms if they are not present yet:
 
 ```bash
 bunx cap add ios
 bunx cap add android
-bunx cap sync
 ```
