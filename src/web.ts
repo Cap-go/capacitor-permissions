@@ -5,7 +5,7 @@ import type {
   MultiplePermissionStatusResult,
   PermissionName,
   PermissionOptions,
-  PermissionState,
+  AppPermissionState,
   PermissionStatusResult,
   PermissionsPlugin,
   PluginVersionResult,
@@ -20,7 +20,7 @@ const QUERY_NAME: Partial<Record<PermissionName, PermissionName | string>> = {
   notifications: 'notifications',
 };
 
-function mapPermissionStatus(state: PermissionState | string): PermissionState {
+function mapPermissionStatus(state: string): AppPermissionState {
   if (state === 'granted') {
     return 'granted';
   }
@@ -70,7 +70,7 @@ export class PermissionsWeb extends WebPlugin implements PermissionsPlugin {
   }
 
   async checkMultiple(options: MultiplePermissionOptions): Promise<MultiplePermissionStatusResult> {
-    const statuses: Record<string, PermissionState> = {};
+    const statuses: Record<string, AppPermissionState> = {};
     for (const permission of options.permissions) {
       statuses[permission] = await this.readStatus(permission);
     }
@@ -78,7 +78,7 @@ export class PermissionsWeb extends WebPlugin implements PermissionsPlugin {
   }
 
   async requestMultiple(options: MultiplePermissionOptions): Promise<MultiplePermissionStatusResult> {
-    const statuses: Record<string, PermissionState> = {};
+    const statuses: Record<string, AppPermissionState> = {};
     for (const permission of options.permissions) {
       statuses[permission] = (await this.request({ permission })).status;
     }
@@ -101,7 +101,7 @@ export class PermissionsWeb extends WebPlugin implements PermissionsPlugin {
     return { version: 'web' };
   }
 
-  private async readStatus(permission: PermissionName): Promise<PermissionState> {
+  private async readStatus(permission: PermissionName): Promise<AppPermissionState> {
     const queryName = QUERY_NAME[permission];
     if (!queryName || !navigator.permissions?.query) {
       return 'unavailable';

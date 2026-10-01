@@ -7,7 +7,7 @@
  * - `limited`: partial access (for example iOS limited photo library or reduced location accuracy).
  * - `unavailable`: the permission is not supported on this platform or not declared in the app manifest.
  */
-export type PermissionState = 'granted' | 'denied' | 'blocked' | 'limited' | 'unavailable';
+export type AppPermissionState = 'granted' | 'denied' | 'blocked' | 'limited' | 'unavailable';
 
 /**
  * Logical permission identifiers shared across iOS, Android, and web.
@@ -59,7 +59,7 @@ export interface PermissionStatusResult {
   /**
    * Current status for the requested permission.
    */
-  status: PermissionState;
+  status: AppPermissionState;
 }
 
 /**
@@ -83,7 +83,7 @@ export interface MultiplePermissionStatusResult {
   /**
    * Map of permission name to status.
    */
-  statuses: Record<string, PermissionState>;
+  statuses: Record<string, AppPermissionState>;
 }
 
 /**

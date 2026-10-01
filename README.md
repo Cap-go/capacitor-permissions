@@ -429,9 +429,9 @@ Returns the platform implementation version marker.
 
 Result for a single permission status.
 
-| Prop         | Type                                                        | Description                                  |
-| ------------ | ----------------------------------------------------------- | -------------------------------------------- |
-| **`status`** | <code><a href="#permissionstate">PermissionState</a></code> | Current status for the requested permission. |
+| Prop         | Type                                                              | Description                                  |
+| ------------ | ----------------------------------------------------------------- | -------------------------------------------- |
+| **`status`** | <code><a href="#apppermissionstate">AppPermissionState</a></code> | Current status for the requested permission. |
 
 
 #### PermissionOptions
@@ -447,9 +447,9 @@ Options for checking or requesting a single permission.
 
 Result for several permission statuses.
 
-| Prop           | Type                                                                                                    | Description                       |
-| -------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| **`statuses`** | <code><a href="#record">Record</a>&lt;string, <a href="#permissionstate">PermissionState</a>&gt;</code> | Map of permission name to status. |
+| Prop           | Type                                                                                                          | Description                       |
+| -------------- | ------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| **`statuses`** | <code><a href="#record">Record</a>&lt;string, <a href="#apppermissionstate">AppPermissionState</a>&gt;</code> | Map of permission name to status. |
 
 
 #### MultiplePermissionOptions
@@ -491,9 +491,17 @@ Plugin version payload.
 ### Type Aliases
 
 
-#### PermissionState
+#### AppPermissionState
 
-<code>'prompt' | 'prompt-with-rationale' | 'granted' | 'denied'</code>
+Normalized permission status returned by every platform implementation.
+
+- `granted`: the user allowed full access.
+- `denied`: the user has not granted access yet, or Android can show a rationale.
+- `blocked`: the user denied access and the app cannot prompt again without settings.
+- `limited`: partial access (for example iOS limited photo library or reduced location accuracy).
+- `unavailable`: the permission is not supported on this platform or not declared in the app manifest.
+
+<code>'granted' | 'denied' | 'blocked' | 'limited' | 'unavailable'</code>
 
 
 #### PermissionName

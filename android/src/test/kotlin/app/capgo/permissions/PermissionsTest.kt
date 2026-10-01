@@ -14,7 +14,7 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [Build.VERSION_CODES.UPSIDE_DOWN_CAKE])
+@Config(sdk = [Build.VERSION_CODES.TIRAMISU])
 class PermissionsTest {
 
     private val implementation = Permissions(ApplicationProvider.getApplicationContext())
