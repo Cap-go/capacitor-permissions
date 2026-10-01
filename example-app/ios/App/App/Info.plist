@@ -95,6 +95,6 @@
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>This app needs speech recognition.</string>
 	<key>NSUserTrackingUsageDescription</key>
-	<string>This app uses tracking to improve ads.</string>
+	<string>This demo requests tracking permission to demonstrate the permissions API.</string>
 </dict>
 </plist>
