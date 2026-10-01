@@ -58,10 +58,20 @@ class PermissionsTest {
     }
 
     @Test
+    @Config(sdk = [Build.VERSION_CODES.TIRAMISU])
     fun notificationsUsePostNotificationsOnApi33() {
         assertArrayEquals(
             arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-            implementation.androidPermissionsFor("notifications"),
+            Permissions(ApplicationProvider.getApplicationContext()).androidPermissionsFor("notifications"),
+        )
+    }
+
+    @Test
+    @Config(sdk = [Build.VERSION_CODES.UPSIDE_DOWN_CAKE])
+    fun notificationsUsePostNotificationsOnApi34() {
+        assertArrayEquals(
+            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+            Permissions(ApplicationProvider.getApplicationContext()).androidPermissionsFor("notifications"),
         )
     }
 }

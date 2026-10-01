@@ -14,7 +14,8 @@ export type AppPermissionState = 'granted' | 'denied' | 'blocked' | 'limited' | 
  *
  * Android-only names include `activityRecognition`, `phone`, `sms`, `mediaAudio`, `mediaImages`, and `mediaVideo`.
  * iOS-only names include `reminders` and `appTrackingTransparency`.
- * Web supports a subset via browser APIs (`camera`, `microphone`, `notifications`, `locationWhenInUse`, `locationAlways`).
+ * Web supports a subset via browser APIs (`camera`, `microphone`, `notifications`, `locationWhenInUse`).
+ * On web, `locationAlways` is an alias of foreground geolocation only; browsers do not expose background location permission.
  */
 export type PermissionName =
   | 'camera'
