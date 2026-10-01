@@ -14,28 +14,21 @@
   <body>
     <main class="container">
       <h1>@capgo/capacitor-permissions</h1>
-      <p class="lead">
-        Demo: camera, microphone, notifications, locationWhenInUse, photoLibrary
-      </p>
+      <p class="lead">Exercise every plugin method and every supported permission name.</p>
 
       <label for="permission-select">Permission</label>
-      <select id="permission-select">
-        <option value="camera">camera</option>
-        <option value="microphone">microphone</option>
-        <option value="notifications">notifications</option>
-        <option value="locationWhenInUse">locationWhenInUse</option>
-        <option value="photoLibrary">photoLibrary</option>
-      </select>
+      <select id="permission-select"></select>
 
       <div class="actions">
-        <button id="check-one">Check</button>
-        <button id="request-one">Request</button>
-        <button id="check-several">Check several</button>
-        <button id="request-several">Request several</button>
-        <button id="rationale">Rationale</button>
-        <button id="open-settings">Open settings</button>
-        <button id="precise-location">Precise location</button>
-        <button id="get-version">Get version</button>
+        <button id="check-one" type="button">Check</button>
+        <button id="request-one" type="button">Request</button>
+        <button id="check-several" type="button">Check all</button>
+        <button id="request-several" type="button">Request all</button>
+        <button id="rationale" type="button">Rationale</button>
+        <button id="open-settings" type="button">App settings</button>
+        <button id="open-notification-settings" type="button">Notification settings</button>
+        <button id="precise-location" type="button">Precise location</button>
+        <button id="get-version" type="button">Get version</button>
       </div>
 
       <pre id="plugin-output">Press a button to run an action.</pre>
