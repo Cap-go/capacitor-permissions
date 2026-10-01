@@ -289,7 +289,7 @@ The `example-app/` folder demos `camera`, `microphone`, `notifications`, `locati
 <docgen-api>
 <!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
 
-Cross-platform permissions API.
+Cross-platform permissions API for Capacitor apps.
 
 ### check(...)
 
@@ -297,7 +297,7 @@ Cross-platform permissions API.
 check(options: PermissionOptions) => Promise<PermissionStatusResult>
 ```
 
-Check the current status of one permission without prompting.
+Check the current status of one permission without prompting the user.
 
 | Param         | Type                                                            |
 | ------------- | --------------------------------------------------------------- |
@@ -314,7 +314,7 @@ Check the current status of one permission without prompting.
 request(options: PermissionOptions) => Promise<PermissionStatusResult>
 ```
 
-Request one permission from the user.
+Request one permission from the user. On Android, shows the system dialog when needed.
 
 | Param         | Type                                                            |
 | ------------- | --------------------------------------------------------------- |
@@ -348,7 +348,7 @@ Check several permissions without prompting.
 requestMultiple(options: MultiplePermissionOptions) => Promise<MultiplePermissionStatusResult>
 ```
 
-Request several permissions from the user.
+Request several permissions sequentially so dialogs are not shown on top of each other.
 
 | Param         | Type                                                                            |
 | ------------- | ------------------------------------------------------------------------------- |
@@ -384,7 +384,7 @@ openSettings(options?: OpenSettingsOptions | undefined) => Promise<void>
 ```
 
 Open the application or notification settings screen.
-Rejects on web.
+Rejects on web with `UNIMPLEMENTED`.
 
 | Param         | Type                                                                |
 | ------------- | ------------------------------------------------------------------- |
@@ -402,7 +402,7 @@ requestPreciseLocation() => Promise<PermissionStatusResult>
 Ask for precise location.
 On iOS, requests temporary full accuracy when already authorized when-in-use.
 On Android, requests `ACCESS_FINE_LOCATION`.
-On web, returns the geolocation permission status.
+On web, returns the geolocation permission status after prompting when possible.
 
 **Returns:** <code>Promise&lt;<a href="#permissionstatusresult">PermissionStatusResult</a>&gt;</code>
 
@@ -429,9 +429,9 @@ Returns the platform implementation version marker.
 
 Result for a single permission status.
 
-| Prop         | Type                                                        | Description                                  |
-| ------------ | ----------------------------------------------------------- | -------------------------------------------- |
-| **`status`** | <code><a href="#permissionstate">PermissionState</a></code> | Current status for the requested permission. |
+| Prop         | Type                                                              | Description                                  |
+| ------------ | ----------------------------------------------------------------- | -------------------------------------------- |
+| **`status`** | <code><a href="#apppermissionstate">AppPermissionState</a></code> | Current status for the requested permission. |
 
 
 #### PermissionOptions
@@ -447,27 +447,27 @@ Options for checking or requesting a single permission.
 
 Result for several permission statuses.
 
-| Prop           | Type                                                                                                    | Description                       |
-| -------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------- |
-| **`statuses`** | <code><a href="#record">Record</a>&lt;string, <a href="#permissionstate">PermissionState</a>&gt;</code> | Map of permission name to status. |
+| Prop           | Type                                                                                                          | Description                       |
+| -------------- | ------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| **`statuses`** | <code><a href="#record">Record</a>&lt;string, <a href="#apppermissionstate">AppPermissionState</a>&gt;</code> | Map of permission name to status. |
 
 
 #### MultiplePermissionOptions
 
 Options for checking or requesting several permissions.
 
-| Prop              | Type                          | Description              |
-| ----------------- | ----------------------------- | ------------------------ |
-| **`permissions`** | <code>PermissionName[]</code> | Permissions to evaluate. |
+| Prop              | Type                          | Description                       |
+| ----------------- | ----------------------------- | --------------------------------- |
+| **`permissions`** | <code>PermissionName[]</code> | Permissions to evaluate in order. |
 
 
 #### ShouldShowRationaleResult
 
 Result for Android rationale checks.
 
-| Prop             | Type                 | Description                                                                        |
-| ---------------- | -------------------- | ---------------------------------------------------------------------------------- |
-| **`shouldShow`** | <code>boolean</code> | True only when Android would show a rationale dialog. Always false on iOS and web. |
+| Prop             | Type                 | Description                                                                                                |
+| ---------------- | -------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **`shouldShow`** | <code>boolean</code> | True only when Android would show a rationale dialog before requesting again. Always false on iOS and web. |
 
 
 #### OpenSettingsOptions
@@ -483,22 +483,35 @@ Options for opening system settings.
 
 Plugin version payload.
 
-| Prop          | Type                | Description                                                 |
-| ------------- | ------------------- | ----------------------------------------------------------- |
-| **`version`** | <code>string</code> | Version identifier returned by the platform implementation. |
+| Prop          | Type                | Description                                                                                         |
+| ------------- | ------------------- | --------------------------------------------------------------------------------------------------- |
+| **`version`** | <code>string</code> | Version identifier returned by the platform implementation (`native` on mobile, `web` in browsers). |
 
 
 ### Type Aliases
 
 
-#### PermissionState
+#### AppPermissionState
 
-<code>'prompt' | 'prompt-with-rationale' | 'granted' | 'denied'</code>
+Normalized permission status returned by every platform implementation.
+
+- `granted`: the user allowed full access.
+- `denied`: the user has not granted access yet, or Android can show a rationale.
+- `blocked`: the user denied access and the app cannot prompt again without settings.
+- `limited`: partial access (for example iOS limited photo library or reduced location accuracy).
+- `unavailable`: the permission is not supported on this platform or not declared in the app manifest.
+
+<code>'granted' | 'denied' | 'blocked' | 'limited' | 'unavailable'</code>
 
 
 #### PermissionName
 
-Named permissions this plugin can check or request.
+Logical permission identifiers shared across iOS, Android, and web.
+
+Android-only names include `activityRecognition`, `phone`, `sms`, `mediaAudio`, `mediaImages`, and `mediaVideo`.
+iOS-only names include `reminders` and `appTrackingTransparency`.
+Web supports a subset via browser APIs (`camera`, `microphone`, `notifications`, `locationWhenInUse`).
+On web, `locationAlways` is an alias of foreground geolocation only; browsers do not expose background location permission.
 
 <code>'camera' | 'microphone' | 'photoLibrary' | 'photoLibraryAddOnly' | 'contacts' | 'calendar' | 'reminders' | 'locationWhenInUse' | 'locationAlways' | 'bluetooth' | 'motion' | 'notifications' | 'speechRecognition' | 'appTrackingTransparency' | 'activityRecognition' | 'phone' | 'sms' | 'mediaAudio' | 'mediaImages' | 'mediaVideo'</code>
 

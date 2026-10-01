@@ -4,12 +4,28 @@ import { Capacitor } from '@capacitor/core';
 import { Permissions } from '@capgo/capacitor-permissions';
 import { CapacitorUpdater } from '@capgo/capacitor-updater';
 
-const DEMO_PERMISSIONS = [
+/** Every `PermissionName` supported by the plugin API. */
+const ALL_PERMISSIONS = [
   'camera',
   'microphone',
-  'notifications',
-  'locationWhenInUse',
   'photoLibrary',
+  'photoLibraryAddOnly',
+  'contacts',
+  'calendar',
+  'reminders',
+  'locationWhenInUse',
+  'locationAlways',
+  'bluetooth',
+  'motion',
+  'notifications',
+  'speechRecognition',
+  'appTrackingTransparency',
+  'activityRecognition',
+  'phone',
+  'sms',
+  'mediaAudio',
+  'mediaImages',
+  'mediaVideo',
 ];
 
 const output = document.getElementById('plugin-output');
@@ -20,6 +36,13 @@ const setOutput = (value) => {
 };
 
 const selected = () => /** @type {import('@capgo/capacitor-permissions').PermissionName} */ (select.value);
+
+for (const permission of ALL_PERMISSIONS) {
+  const option = document.createElement('option');
+  option.value = permission;
+  option.textContent = permission;
+  select.appendChild(option);
+}
 
 if (Capacitor.isNativePlatform()) {
   void CapacitorUpdater.notifyAppReady().catch((error) => {
@@ -45,7 +68,7 @@ document.getElementById('request-one').addEventListener('click', async () => {
 
 document.getElementById('check-several').addEventListener('click', async () => {
   try {
-    setOutput(await Permissions.checkMultiple({ permissions: DEMO_PERMISSIONS }));
+    setOutput(await Permissions.checkMultiple({ permissions: ALL_PERMISSIONS }));
   } catch (error) {
     setOutput(`Error: ${error?.message ?? error}`);
   }
@@ -53,7 +76,7 @@ document.getElementById('check-several').addEventListener('click', async () => {
 
 document.getElementById('request-several').addEventListener('click', async () => {
   try {
-    setOutput(await Permissions.requestMultiple({ permissions: DEMO_PERMISSIONS }));
+    setOutput(await Permissions.requestMultiple({ permissions: ALL_PERMISSIONS }));
   } catch (error) {
     setOutput(`Error: ${error?.message ?? error}`);
   }
@@ -71,6 +94,15 @@ document.getElementById('open-settings').addEventListener('click', async () => {
   try {
     await Permissions.openSettings({ type: 'application' });
     setOutput({ opened: true, type: 'application' });
+  } catch (error) {
+    setOutput(`Error: ${error?.message ?? error}`);
+  }
+});
+
+document.getElementById('open-notification-settings').addEventListener('click', async () => {
+  try {
+    await Permissions.openSettings({ type: 'notifications' });
+    setOutput({ opened: true, type: 'notifications' });
   } catch (error) {
     setOutput(`Error: ${error?.message ?? error}`);
   }

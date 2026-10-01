@@ -1,11 +1,11 @@
 import { WebPlugin } from '@capacitor/core';
 
 import type {
+  AppPermissionState,
   MultiplePermissionOptions,
   MultiplePermissionStatusResult,
   PermissionName,
   PermissionOptions,
-  PermissionState,
   PermissionStatusResult,
   PermissionsPlugin,
   PluginVersionResult,
@@ -20,7 +20,10 @@ const QUERY_NAME: Partial<Record<PermissionName, PermissionName | string>> = {
   notifications: 'notifications',
 };
 
-function mapPermissionStatus(state: PermissionState | string): PermissionState {
+/**
+ * Maps browser permission query states to plugin status values.
+ */
+function mapPermissionStatus(state: string): AppPermissionState {
   if (state === 'granted') {
     return 'granted';
   }
@@ -33,11 +36,16 @@ function mapPermissionStatus(state: PermissionState | string): PermissionState {
   return 'unavailable';
 }
 
+/**
+ * Web implementation of the permissions plugin.
+ */
 export class PermissionsWeb extends WebPlugin implements PermissionsPlugin {
+  /** @inheritdoc */
   async check(options: PermissionOptions): Promise<PermissionStatusResult> {
     return { status: await this.readStatus(options.permission) };
   }
 
+  /** @inheritdoc */
   async request(options: PermissionOptions): Promise<PermissionStatusResult> {
     const { permission } = options;
     try {
@@ -69,39 +77,48 @@ export class PermissionsWeb extends WebPlugin implements PermissionsPlugin {
     return { status: await this.readStatus(permission) };
   }
 
+  /** @inheritdoc */
   async checkMultiple(options: MultiplePermissionOptions): Promise<MultiplePermissionStatusResult> {
-    const statuses: Record<string, PermissionState> = {};
+    const statuses: Record<string, AppPermissionState> = {};
     for (const permission of options.permissions) {
       statuses[permission] = await this.readStatus(permission);
     }
     return { statuses };
   }
 
+  /** @inheritdoc */
   async requestMultiple(options: MultiplePermissionOptions): Promise<MultiplePermissionStatusResult> {
-    const statuses: Record<string, PermissionState> = {};
+    const statuses: Record<string, AppPermissionState> = {};
     for (const permission of options.permissions) {
       statuses[permission] = (await this.request({ permission })).status;
     }
     return { statuses };
   }
 
+  /** @inheritdoc */
   async shouldShowRationale(): Promise<ShouldShowRationaleResult> {
     return { shouldShow: false };
   }
 
+  /** @inheritdoc */
   async openSettings(): Promise<void> {
     throw this.unimplemented('openSettings is not available on web');
   }
 
+  /** @inheritdoc */
   async requestPreciseLocation(): Promise<PermissionStatusResult> {
     return this.request({ permission: 'locationWhenInUse' });
   }
 
+  /** @inheritdoc */
   async getPluginVersion(): Promise<PluginVersionResult> {
     return { version: 'web' };
   }
 
-  private async readStatus(permission: PermissionName): Promise<PermissionState> {
+  /**
+   * Reads the current browser permission state when the Permissions API supports it.
+   */
+  private async readStatus(permission: PermissionName): Promise<AppPermissionState> {
     const queryName = QUERY_NAME[permission];
     if (!queryName || !navigator.permissions?.query) {
       return 'unavailable';

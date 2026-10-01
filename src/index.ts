@@ -7,4 +7,5 @@ const Permissions = registerPlugin<PermissionsPlugin>('Permissions', {
 });
 
 export * from './definitions';
+export type { AppPermissionState as PermissionState } from './definitions';
 export { Permissions };
